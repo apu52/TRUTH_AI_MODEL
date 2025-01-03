@@ -21,6 +21,6 @@ def collect_youtube_data(query, max_results=50):
     else:
         return None
 
-# Example usage
+
 youtube_videos = collect_youtube_data("misinformation", 50)
 print(json.dumps(youtube_videos, indent=2))
