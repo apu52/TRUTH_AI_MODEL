@@ -22,6 +22,6 @@ def collect_instagram_data(query, max_results=50):
     else:
         return None
 
-# Example usage
+
 instagram_posts = collect_instagram_data("misinformation", 50)
 print(json.dumps(instagram_posts, indent=2))
