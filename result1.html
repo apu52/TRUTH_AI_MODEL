@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TruthAI Dashboard</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.0/chart.min.js"></script>
+    <style>
+        :root {
+            --primary: #8B5CF6;
+            --bg-dark: #111827;
+            --bg-card: #1F2937;
+            --border: #374151;
+            --text: #F3F4F6;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, system-ui, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(to bottom right, #111827, #1F2937, #111827);
+            color: var(--text);
+            min-height: 100vh;
+        }
+
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 260px;
+            height: 100%;
+            background: rgba(17, 24, 39, 0.95);
+            border-right: 1px solid var(--border);
+            padding: 1.5rem;
+            backdrop-filter: blur(10px);
+            z-index: 100;
+        }
+
+        .logo {
+            color: var(--primary);
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin-bottom: 2rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .search-box {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            padding: 0.75rem;
+            border-radius: 8px;
+            width: 100%;
+            color: var(--text);
+            margin-bottom: 1rem;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            padding: 0.75rem 1rem;
+            margin: 0.5rem 0;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            color: #9CA3AF;
+        }
+
+        .nav-item:hover {
+            background: rgba(139, 92, 246, 0.1);
+            color: var(--primary);
+        }
+
+        .nav-item.active {
+            background: var(--primary);
+            color: white;
+        }
+
+        .main-content {
+            margin-left: 260px;
+            padding: 2rem;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn:hover {
+            opacity: 0.9;
+            transform: translateY(-2px);
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1.5rem;
+            transition: all 0.3s;
+        }
+
+        .chart-container {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .chart-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .chart-title {
+            font-size: 1.25rem;
+            font-weight: 500;
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+            .main-content {
+                margin-left: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="sidebar">
+        <div class="logo">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+            </svg>
+            TruthAI
+        </div>
+        <input type="text" class="search-box" placeholder="Search terms...">
+        <div class="nav-items">
+            <div class="nav-item active" data-view="timeline">Timeline</div>
+            <div class="nav-item" data-view="hashtags">Hashtags</div>
+            <div class="nav-item" data-view="links">Links</div>
+            <div class="nav-item" data-view="activity">Activity</div>
+            <a href="result2.HTML">
+                <button class="btn">Get Started</button>
+              </a>
+        </div>
+    </div>
+
+    <div class="main-content">
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-title">Active Monitors</div>
+                <div class="stat-value">1,234</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-title">Flagged Content</div>
+                <div class="stat-value">267</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-title">Total Sources</div>
+                <div class="stat-value">892</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-title">Risk Score</div>
+                <div class="stat-value">76%</div>
+            </div>
+        </div>
+
+        <div class="chart-container">
+            <div class="chart-header">
+                <div class="chart-title">Analysis Overview</div>
+            </div>
+            <canvas id="mainChart"></canvas>
+        </div>
+    </div>
+
+    <script>
+        const chartData = {
+            timeline: {
+                type: 'line',
+                data: {
+                    labels: Array.from({length: 30}, (_, i) => `Day ${i + 1}`),
+                    datasets: [{
+                        label: 'Content Volume',
+                        data: Array.from({length: 30}, () => Math.floor(Math.random() * 10000) + 2000),
+                        borderColor: '#8B5CF6',
+                        tension: 0.4,
+                        fill: true,
+                        backgroundColor: 'rgba(139, 92, 246, 0.1)'
+                    }]
+                }
+            },
+            hashtags: {
+                type: 'bar',
+                data: {
+                    labels: ['#viral', '#trending', '#news', '#tech', '#health'],
+                    datasets: [{
+                        label: 'Hashtag Usage',
+                        data: [12000, 8000, 6000, 4000, 3000],
+                        backgroundColor: '#8B5CF6'
+                    }]
+                }
+            },
+            links: {
+                type: 'doughnut',
+                data: {
+                    labels: ['Verified', 'Unverified', 'Suspicious'],
+                    datasets: [{
+                        data: [65, 25, 10],
+                        backgroundColor: ['#34D399', '#FBBF24', '#F87171']
+                    }]
+                }
+            },
+            activity: {
+                type: 'line',
+                data: {
+                    labels: ['00:00', '04:00', '08:00', '12:00', '16:00', '20:00'],
+                    datasets: [{
+                        label: 'User Activity',
+                        data: [300, 200, 600, 800, 1200, 900],
+                        borderColor: '#8B5CF6',
+                        tension: 0.4
+                    }]
+                }
+            }
+        };
+
+        const commonOptions = {
+            responsive: true,
+            plugins: {
+                legend: {
+                    labels: { color: '#F3F4F6' }
+                }
+            },
+            scales: {
+                y: {
+                    grid: { color: 'rgba(55, 65, 81, 0.3)' },
+                    ticks: { color: '#9CA3AF' }
+                },
+                x: {
+                    grid: { color: 'rgba(55, 65, 81, 0.3)' },
+                    ticks: { color: '#9CA3AF' }
+                }
+            }
+        };
+
+        let currentChart = new Chart(
+            document.getElementById('mainChart').getContext('2d'),
+            {
+                ...chartData.timeline,
+                options: commonOptions
+            }
+        );
+
+        document.querySelectorAll('.nav-item').forEach(item => {
+            item.addEventListener('click', () => {
+                document.querySelector('.nav-item.active').classList.remove('active');
+                item.classList.add('active');
+
+                const view = item.dataset.view;
+                if (chartData[view]) {
+                    currentChart.destroy();
+                    currentChart = new Chart(
+                        document.getElementById('mainChart').getContext('2d'),
+                        {
+                            ...chartData[view],
+                            options: commonOptions
+                        }
+                    );
+                }
+            });
+        });
+    </script>
+</body>
+</html>

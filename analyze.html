@@ -1,0 +1,606 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+   <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TruthAI Dashboard</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.0/chart.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #8B5CF6;
+            --bg-dark: #111827;
+            --bg-card: #1F2937;
+            --border: #374151;
+            --text: #F3F4F6;
+            --success: #34D399;
+            --warning: #FBBF24;
+            --danger: #F87171;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, system-ui, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #111827, #1F2937);
+            color: var(--text);
+            min-height: 100vh;
+        }
+
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 280px;
+            height: 100%;
+            background: rgba(17, 24, 39, 0.95);
+            border-right: 1px solid var(--border);
+            padding: 1.5rem;
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+        }
+
+        .logo {
+            color: var(--primary);
+            font-size: 1.75rem;
+            font-weight: bold;
+            margin-bottom: 2rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .logo i {
+            font-size: 1.5rem;
+        }
+
+        .search-box {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            padding: 0.75rem;
+            border-radius: 8px;
+            width: 100%;
+            color: var(--text);
+            margin-bottom: 1rem;
+        }
+
+        .nav-section {
+            margin: 2rem 0;
+        }
+
+        .nav-section-title {
+            color: #9CA3AF;
+            font-size: 0.875rem;
+            margin-bottom: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem 1rem;
+            margin: 0.5rem 0;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            color: #9CA3AF;
+        }
+
+        .nav-item:hover {
+            background: rgba(139, 92, 246, 0.1);
+            color: var(--primary);
+        }
+
+        .nav-item.active {
+            background: var(--primary);
+            color: white;
+        }
+
+        .social-icons {
+            display: flex;
+            gap: 1rem;
+            margin: 1rem 0;
+        }
+
+        .social-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--bg-card);
+            color: var(--text);
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+
+        .social-icon:hover {
+            background: var(--primary);
+            transform: translateY(-2px);
+        }
+
+        .main-content {
+            margin-left: 280px;
+            padding: 2rem;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .url-input {
+            display: flex;
+            gap: 1rem;
+            width: 100%;
+            max-width: 600px;
+        }
+
+        .url-input input {
+            flex: 1;
+            padding: 0.75rem;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            background: var(--bg-card);
+            color: var(--text);
+        }
+
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            border: none;
+            background: var(--primary);
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn:hover {
+            opacity: 0.9;
+            transform: translateY(-2px);
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1.5rem;
+            transition: all 0.3s;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .stat-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .stat-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(139, 92, 246, 0.1);
+            color: var(--primary);
+        }
+
+        .stat-title {
+            color: #9CA3AF;
+            font-size: 0.875rem;
+        }
+
+        .stat-value {
+            font-size: 1.75rem;
+            font-weight: bold;
+            margin: 0.5rem 0;
+        }
+
+        .stat-trend {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.875rem;
+        }
+
+        .trend-up { color: var(--success); }
+        .trend-down { color: var(--danger); }
+
+        .charts-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .chart-container {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1.5rem;
+        }
+
+        .chart-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .chart-title {
+            font-size: 1.25rem;
+            font-weight: 500;
+        }
+
+        .chart-filters {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .chart-filter {
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            background: rgba(139, 92, 246, 0.1);
+            color: var(--primary);
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .chart-filter.active {
+            background: var(--primary);
+            color: white;
+        }
+
+        .source-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem;
+            background: rgba(31, 41, 55, 0.5);
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            border: 1px solid var(--border);
+            transition: all 0.3s;
+        }
+
+        .source-item:hover {
+            transform: translateX(5px);
+            border-color: var(--primary);
+        }
+
+        .source-profile {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .source-avatar {
+            width: 40px;
+            height: 40px;
+            background: rgba(139, 92, 246, 0.2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary);
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+            
+            .main-content {
+                margin-left: 0;
+            }
+
+            .charts-grid {
+                grid-template-columns: 1fr;
+            }
+
+        }
+        
+        .url-input {
+            display: flex;
+            gap: 1rem;
+            width: 100%;
+            max-width: 800px;
+        }
+
+        .platform-select {
+            padding: 0.75rem;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            background: var(--bg-card);
+            color: var(--text);
+            min-width: 150px;
+        }
+
+        .platform-select option {
+            background: var(--bg-dark);
+            color: var(--text);
+        }
+    </style>
+</head>
+<body>
+    <div class="sidebar">
+        <div class="logo">
+            <i class="fas fa-shield-alt"></i>
+            TruthAI
+        </div>
+        
+        <input type="text" class="search-box" placeholder="Search terms...">
+        
+        <div class="nav-section">
+            <div class="nav-section-title">Main Menu</div>
+            <div class="nav-item active">
+                <i class="fas fa-home"></i>
+                Dashboard
+            </div>
+            <div class="nav-item">
+                <i class="fas fa-chart-line"></i>
+                Analytics
+            </div>
+            <div class="nav-item">
+                <i class="fas fa-hashtag"></i>
+                Trends
+            </div>
+            <div class="nav-item">
+                <i class="fas fa-bell"></i>
+                Alerts
+            </div>
+        </div>
+
+        <div class="nav-section">
+            <div class="nav-section-title">Social Media</div>
+            <div class="social-icons">
+                <div class="social-icon"><i class="fab fa-twitter"></i></div>
+                <div class="social-icon"><i class="fab fa-facebook"></i></div>
+                <div class="social-icon"><i class="fab fa-instagram"></i></div>
+                <div class="social-icon"><i class="fab fa-linkedin"></i></div>
+            </div>
+        </div>
+
+        <div class="nav-section">
+            <div class="nav-section-title">Settings</div>
+            <div class="nav-item">
+                <i class="fas fa-cog"></i>
+                Preferences
+            </div>
+            <div class="nav-item">
+                <i class="fas fa-user"></i>
+                Account
+            </div>
+        </div>
+    </div>
+
+    <div class="main-content">
+        <div class="header">
+            <div class="url-input">
+                <input type="text" placeholder="Enter social media post URL to analyze...">
+                <a href="result1.html">
+                    <button class="btn">Analyze</button>
+                  </a>
+            </div>
+        </div>
+
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-header">
+                    <div class="stat-icon">
+                        <i class="fas fa-users"></i>
+                    </div>
+                </div>
+                <div class="stat-title">Active Monitors</div>
+                <div class="stat-value">1,234</div>
+                <div class="stat-trend">
+                    <i class="fas fa-arrow-up"></i>
+                    <span class="trend-up">+12%</span>
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-header">
+                    <div class="stat-icon">
+                        <i class="fas fa-exclamation-triangle"></i>
+                    </div>
+                </div>
+                <div class="stat-title">Flagged Content</div>
+                <div class="stat-value">267</div>
+                <div class="stat-trend">
+                    <i class="fas fa-arrow-down"></i>
+                    <span class="trend-down">-5%</span>
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-header">
+                    <div class="stat-icon">
+                        <i class="fas fa-share-alt"></i>
+                    </div>
+                </div>
+                <div class="stat-title">Viral Posts</div>
+                <div class="stat-value">89</div>
+                <div class="stat-trend">
+                    <i class="fas fa-arrow-up"></i>
+                    <span class="trend-up">+28%</span>
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-header">
+                    <div class="stat-icon">
+                        <i class="fas fa-shield-alt"></i>
+                    </div>
+                </div>
+                <div class="stat-title">Risk Score</div>
+                <div class="stat-value">76%</div>
+                <div class="stat-trend">
+                    <i class="fas fa-arrow-up"></i>
+                    <span class="trend-up">+2%</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="charts-grid">
+            <div class="chart-container">
+                <div class="chart-header">
+                    <div class="chart-title">Content Analysis</div>
+                    <div class="chart-filters">
+                        <div class="chart-filter active">Daily</div>
+                        <div class="chart-filter">Weekly</div>
+                        <div class="chart-filter">Monthly</div>
+                    </div>
+                </div>
+                <canvas id="contentChart"></canvas>
+            </div>
+
+            <div class="chart-container">
+                <div class="chart-header">
+                    <div class="chart-title">Engagement Metrics</div>
+                    <div class="chart-filters">
+                        <div class="chart-filter active">Likes</div>
+                        <div class="chart-filter">Shares</div>
+                        <div class="chart-filter">Comments</div>
+                    </div>
+                </div>
+                <canvas id="engagementChart"></canvas>
+            </div>
+        </div>
+
+        <div class="charts-grid">
+            <div class="chart-container">
+                <div class="chart-header">
+                    <div class="chart-title">Recent Alerts</div>
+                </div>
+                <div class="source-item">
+                    <div class="source-profile">
+                        <div class="source-avatar">
+                            <i class="fas fa-exclamation"></i>
+                        </div>
+                        <div>
+                            <div>High-Risk Content Detected</div>
+                            <div style="color: #9CA3AF">Viral post containing unverified claims</div>
+                        </div>
+                    </div>
+                    <button class="btn">Review</button>
+                </div>
+                <div class="main-content">
+                    <div class="header">
+                        <div class="url-input">
+                            <select class="platform-select">
+                                <option value="">Select Platform</option>
+                                <option value="twitter">Twitter</option>
+                                <option value="facebook">Facebook</option>
+                                <option value="instagram">Instagram</option>
+                                <option value="linkedin">LinkedIn</option>
+                                <option value="tiktok">TikTok</option>
+                            </select>
+                            <input type="text" placeholder="Enter social media post URL to analyze...">
+                            <a href="result1.html">
+                                <button class="btn">Analyze</button>
+                              </a>
+                        </div>
+                    </div>
+                     <!-- Charts section with added JavaScript -->
+       
+
+        <script>
+            // Content Analysis Chart
+            const contentCtx = document.getElementById('contentChart').getContext('2d');
+            new Chart(contentCtx, {
+                type: 'line',
+                data: {
+                    labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+                    datasets: [{
+                        label: 'Verified Content',
+                        data: [65, 72, 68, 75, 82, 78, 85],
+                        borderColor: '#8B5CF6',
+                        tension: 0.4
+                    }, {
+                        label: 'Suspicious Content',
+                        data: [25, 18, 22, 15, 12, 16, 10],
+                        borderColor: '#F87171',
+                        tension: 0.4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: { color: '#F3F4F6' }
+                        }
+                    },
+                    scales: {
+                        x: { grid: { color: '#374151' }, ticks: { color: '#F3F4F6' } },
+                        y: { grid: { color: '#374151' }, ticks: { color: '#F3F4F6' } }
+                    }
+                }
+            });
+    
+            // Engagement Metrics Chart
+            const engagementCtx = document.getElementById('engagementChart').getContext('2d');
+            new Chart(engagementCtx, {
+                type: 'bar',
+                data: {
+                    labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+                    datasets: [{
+                        label: 'Likes',
+                        data: [1200, 1500, 1300, 1800, 2000, 2200, 1900],
+                        backgroundColor: '#8B5CF6'
+                    }, {
+                        label: 'Shares',
+                        data: [300, 400, 350, 500, 600, 550, 450],
+                        backgroundColor: '#34D399'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: { color: '#F3F4F6' }
+                        }
+                    },
+                    scales: {
+                        x: { grid: { color: '#374151' }, ticks: { color: '#F3F4F6' } },
+                        y: { grid: { color: '#374151' }, ticks: { color: '#F3F4F6' } }
+                    }
+                }
+            });
+    
+            // Add interactivity to chart filters
+            document.querySelectorAll('.chart-filter').forEach(filter => {
+                filter.addEventListener('click', function() {
+                    const parent = this.parentElement;
+                    parent.querySelector('.active').classList.remove('active');
+                    this.classList.add('active');
+                });
+            });
+        </script>
+
+
+                    

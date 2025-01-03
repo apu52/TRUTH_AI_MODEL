@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TruthAI - Advanced Content Verification Platform</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #6366f1;
+            --secondary: #ec4899;
+            --bg: #0f172a;
+            --card-bg: #1e293b;
+            --text: #f8fafc;
+            --border: #334155;
+            --gradient: linear-gradient(135deg, var(--primary), var(--secondary));
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', system-ui, sans-serif;
+        }
+
+        body {
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+        }
+
+        .navbar {
+            position: fixed;
+            width: 100%;
+            padding: 1.5rem 4rem;
+            background: rgba(15, 23, 42, 0.95);
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .logo {
+            font-size: 2rem;
+            font-weight: 800;
+            background: var(--gradient);
+            -webkit-background-clip: text;
+            color: transparent;
+            transition: transform 0.3s;
+        }
+
+        .logo:hover {
+            transform: scale(1.05);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 3rem;
+            align-items: center;
+        }
+
+        .nav-link {
+            color: var(--text);
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s;
+            position: relative;
+        }
+
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: -4px;
+            left: 0;
+            background: var(--gradient);
+            transition: width 0.3s;
+        }
+
+        .nav-link:hover::after {
+            width: 100%;
+        }
+
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            border: none;
+            background: var(--gradient);
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: 0.5s;
+        }
+
+        .btn:hover::before {
+            left: 100%;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .hero {
+            padding: 10rem 4rem 4rem;
+            background: var(--gradient);
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('/api/placeholder/1920/1080') center/cover;
+            opacity: 0.1;
+        }
+
+        .features {
+            padding: 6rem 4rem;
+            background: radial-gradient(circle at center, var(--card-bg), var(--bg));
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+
+        .feature-card {
+            padding: 2rem;
+            border-radius: 16px;
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            transition: all 0.4s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .feature-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--gradient);
+            opacity: 0;
+            transition: 0.4s;
+            z-index: 0;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-10px) scale(1.02);
+            border-color: transparent;
+        }
+
+        .feature-card:hover::before {
+            opacity: 0.1;
+        }
+
+        .feature-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .feature-icon {
+            width: 70px;
+            height: 70px;
+            background: var(--gradient);
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+            color: white;
+            margin-bottom: 1.5rem;
+            transition: all 0.4s;
+        }
+
+        .feature-card:hover .feature-icon {
+            transform: scale(1.1) rotate(5deg);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .feature-title {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            background: var(--gradient);
+            -webkit-background-clip: text;
+            color: transparent;
+        }
+
+        .feature-description {
+            font-size: 1rem;
+            opacity: 0.9;
+            margin-bottom: 1rem;
+        }
+
+        .feature-details {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.4s;
+        }
+
+        .feature-card:hover .feature-details {
+            max-height: 200px;
+        }
+
+        /* Additional Styles */
+        .stats-card {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 16px;
+            padding: 2rem;
+            text-align: center;
+            transition: all 0.4s;
+        }
+
+        .stats-card:hover {
+            transform: translateY(-5px);
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .testimonial-card {
+            transition: all 0.4s;
+            cursor: pointer;
+        }
+
+        .testimonial-card:hover {
+            transform: translateY(-5px) scale(1.02);
+            background: var(--card-bg);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .contact-form input,
+        .contact-form textarea {
+            transition: all 0.3s;
+        }
+
+        .contact-form input:focus,
+        .contact-form textarea:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.2);
+            outline: none;
+        }
+
+        @media (max-width: 768px) {
+            .navbar {
+                padding: 1rem;
+            }
+            
+            .nav-links {
+                display: none;
+            }
+
+            .hero {
+                padding: 8rem 1rem 4rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo">
+            <i class="fas fa-shield-alt"></i> TruthAI
+        </div>
+        <div class="nav-links">
+            <a href="#features" class="nav-link">Features</a>
+            <a href="home.html" class="nav-link">Testimonials</a>
+            <a href="home.html" class="nav-link">Contact</a>
+            <a href="analyze.html">
+                <button class="btn">Get Started</button>
+              </a>
+        </div>
+    </nav>
+
+    <section id="features" class="features">
+        <h2 class="section-title">Advanced Features</h2>
+        <div class="features-grid">
+            <div class="feature-card">
+                <div class="feature-content">
+                    <div class="feature-icon">
+                        <i class="fas fa-photo-video"></i>
+                    </div>
+                    <h3 class="feature-title">Multimedia Misinformation Detection</h3>
+                    <p class="feature-description">Advanced AI algorithms to detect manipulated images, videos, and audio content.</p>
+                    <div class="feature-details">
+                        <ul>
+                            <li>Deep learning image analysis</li>
+                            <li>Video manipulation detection</li>
+                            <li>Audio authenticity verification</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-content">
+                    <div class="feature-icon">
+                        <i class="fas fa-heart"></i>
+                    </div>
+                    <h3 class="feature-title">Sentiment and Emotion Analysis</h3>
+                    <p class="feature-description">Analyze emotional context and sentiment patterns in content spread.</p>
+                    <div class="feature-details">
+                        <ul>
+                            <li>Real-time emotion tracking</li>
+                            <li>Sentiment trend analysis</li>
+                            <li>Context-aware processing</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-content">
+                    <div class="feature-icon">
+                        <i class="fas fa-star"></i>
+                    </div>
+                    <h3 class="feature-title">Source Credibility Scoring</h3>
+                    <p class="feature-description">Evaluate and rank content sources based on historical accuracy.</p>
+                    <div class="feature-details">
+                        <ul>
+                            <li>Source verification</li>
+                            <li>Credibility metrics</li>
+                            <li>Historical tracking</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-content">
+                    <div class="feature-icon">
+                        <i class="fas fa-globe"></i>
+                    </div>
+                    <h3 class="feature-title">Geographical and Demographic Filtering</h3>
+                    <p class="feature-description">Target specific regions and demographics for focused analysis.</p>
+                    <div class="feature-details">
+                        <ul>
+                            <li>Location-based filtering</li>
+                            <li>Demographic targeting</li>
+                            <li>Custom segmentation</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-content">
+                    <div class="feature-icon">
+                        <i class="fas fa-check-circle"></i>
+                    </div>
+                    <h3 class="feature-title">Real-Time Fact-Checking</h3>
+                    <p class="feature-description">Instant verification against trusted sources and databases.</p>
+                    <div class="feature-details">
+                        <ul>
+                            <li>Live fact verification</li>
+                            <li>Database integration</li>
+                            <li>Automated checking</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-content">
+                    <div class="feature-icon">
+                        <i class="fas fa-network-wired"></i>
+                    </div>
+                    <h3 class="feature-title">Misinformation Propagation Analysis</h3>
+                    <p class="feature-description">Track how false information spreads across networks.</p>
+                    <div class="feature-details">
+                        <ul>
+                            <li>Network mapping</li>
+                            <li>Spread patterns</li>
+                            <li>Impact assessment</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-content">
+                    <div class="feature-icon">
+                        <i class="fas fa-user-shield"></i>
+                    </div>
+                    <h3 class="feature-title">Privacy & Ethical Considerations</h3>
+                    <p class="feature-description">Ensure compliance with privacy laws and ethical guidelines.</p>
+                    <div class="feature-details">
+                        <ul>
+                            <li>Data protection</li>
+                            <li>Ethical AI use</li>
+                            <li>Compliance tracking</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-content">
+                    <div class="feature-icon">
+                        <i class="fas fa-chart-bar"></i>
+                    </div>
+                    <h3 class="feature-title">Interactive Analytics & Reporting</h3>
+                    <p class="feature-description">Comprehensive dashboards and customizable reports.</p>
+                    <div class="feature-details">
+                        <ul>
+                            <li>Real-time dashboards</li>
+                            <li>Custom reporting</li>
+                            <li>Data visualization</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</body>
+</html>

@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TruthAI - Advanced Content Verification Platform</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #6366f1;
+            --secondary: #ec4899;
+            --bg: #0f172a;
+            --card-bg: #1e293b;
+            --text: #f8fafc;
+            --border: #334155;
+            --gradient: linear-gradient(135deg, var(--primary), var(--secondary));
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', system-ui, sans-serif;
+            scroll-behavior: smooth;
+        }
+
+        body {
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+        }
+
+        .navbar {
+            position: fixed;
+            width: 100%;
+            padding: 1.5rem 4rem;
+            background: rgba(15, 23, 42, 0.95);
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .logo {
+            font-size: 2rem;
+            font-weight: 800;
+            background: var(--gradient);
+            -webkit-background-clip: text;
+            color: transparent;
+            transition: transform 0.3s;
+        }
+
+        .logo:hover {
+            transform: scale(1.05);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 3rem;
+            align-items: center;
+        }
+
+        .nav-link {
+            color: var(--text);
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s;
+            position: relative;
+        }
+
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: -4px;
+            left: 0;
+            background: var(--gradient);
+            transition: width 0.3s;
+        }
+
+        .nav-link:hover::after {
+            width: 100%;
+        }
+
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            border: none;
+            background: var(--gradient);
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: 0.5s;
+        }
+
+        .btn:hover::before {
+            left: 100%;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 2px solid var(--primary);
+        }
+
+        .hero {
+            min-height: 100vh;
+            padding: 10rem 4rem 4rem;
+            background: var(--gradient);
+            text-align: center;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('/api/placeholder/1920/1080') center/cover;
+            opacity: 0.1;
+        }
+
+        .hero-content {
+            max-width: 800px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .hero-title {
+            font-size: 4rem;
+            font-weight: 800;
+            margin-bottom: 1.5rem;
+            line-height: 1.2;
+        }
+
+        .hero-subtitle {
+            font-size: 1.25rem;
+            margin-bottom: 2rem;
+            opacity: 0.9;
+        }
+
+        .stats-section {
+            padding: 4rem;
+            background: var(--card-bg);
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .stat-card {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 16px;
+            padding: 2rem;
+            text-align: center;
+            transition: all 0.4s;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .stat-value {
+            font-size: 3rem;
+            font-weight: 800;
+            background: var(--gradient);
+            -webkit-background-clip: text;
+            color: transparent;
+            margin-bottom: 0.5rem;
+        }
+
+        .testimonials {
+            padding: 6rem 4rem;
+            background: var(--bg);
+        }
+
+        .section-title {
+            font-size: 2.5rem;
+            text-align: center;
+            margin-bottom: 3rem;
+            background: var(--gradient);
+            -webkit-background-clip: text;
+            color: transparent;
+        }
+
+        .testimonials-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .testimonial-card {
+            background: var(--card-bg);
+            border-radius: 16px;
+            padding: 2rem;
+            transition: all 0.4s;
+            cursor: pointer;
+        }
+
+        .testimonial-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .testimonial-content {
+            margin-bottom: 1.5rem;
+            font-style: italic;
+        }
+
+        .testimonial-author {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .author-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: var(--gradient);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+        }
+
+        .author-info h4 {
+            margin-bottom: 0.25rem;
+        }
+
+        .contact {
+            padding: 6rem 4rem;
+            background: var(--card-bg);
+        }
+
+        .contact-form {
+            max-width: 600px;
+            margin: 0 auto;
+            background: var(--bg);
+            padding: 2rem;
+            border-radius: 16px;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 1rem;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            background: var(--card-bg);
+            color: var(--text);
+            transition: all 0.3s;
+        }
+
+        .form-input:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.2);
+            outline: none;
+        }
+
+        textarea.form-input {
+            min-height: 150px;
+            resize: vertical;
+        }
+
+        @media (max-width: 768px) {
+            .navbar {
+                padding: 1rem;
+            }
+            
+            .nav-links {
+                display: none;
+            }
+
+            .hero {
+                padding: 8rem 1rem 4rem;
+            }
+
+            .hero-title {
+                font-size: 2.5rem;
+            }
+
+            .stats-section,
+            .testimonials,
+            .contact {
+                padding: 4rem 1rem;
+            }
+
+            .design-section {
+                padding: 6rem 4rem;
+                background: var(--card-bg);
+            }
+    
+            .design-container {
+                max-width: 1200px;
+                margin: 0 auto;
+                display: grid;
+                grid-template-columns: repeat(2, 1fr);
+                gap: 4rem;
+                align-items: center;
+            }
+    
+            .design-content {
+                padding-right: 2rem;
+            }
+    
+            .design-title {
+                font-size: 2.5rem;
+                margin-bottom: 1.5rem;
+                background: var(--gradient);
+                -webkit-background-clip: text;
+                color: transparent;
+            }
+    
+            .design-description {
+                margin-bottom: 2rem;
+                font-size: 1.1rem;
+                opacity: 0.9;
+            }
+    
+            .design-features {
+                display: grid;
+                grid-template-columns: repeat(2, 1fr);
+                gap: 1.5rem;
+            }
+    
+            .design-feature {
+                display: flex;
+                align-items: flex-start;
+                gap: 1rem;
+            }
+    
+            .feature-icon {
+                width: 40px;
+                height: 40px;
+                background: var(--gradient);
+                border-radius: 10px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                color: white;
+                font-size: 1.2rem;
+                flex-shrink: 0;
+            }
+    
+            .feature-text h4 {
+                margin-bottom: 0.5rem;
+                font-size: 1.1rem;
+            }
+    
+            .feature-text p {
+                font-size: 0.9rem;
+                opacity: 0.8;
+            }
+    
+            .design-image {
+                position: relative;
+                height: 500px;
+                background: var(--gradient);
+                border-radius: 20px;
+                overflow: hidden;
+            }
+    
+            @media (max-width: 768px) {
+                .design-section {
+                    padding: 4rem 1rem;
+                }
+    
+                .design-container {
+                    grid-template-columns: 1fr;
+                    gap: 2rem;
+                }
+    
+                .design-content {
+                    padding-right: 0;
+                }
+    
+                .design-features {
+                    grid-template-columns: 1fr;
+                }
+    
+                .design-image {
+                    height: 300px;
+                }
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo">
+            <i class="fas fa-shield-alt"></i> TruthAI
+        </div>
+        <div class="nav-links">
+            <a href="#home" class="nav-link">Home</a>
+            <a href="features.html" class="nav-link">Features</a>
+            <a href="#stats" class="nav-link">Stats</a>
+            <a href="#testimonials" class="nav-link">Testimonials</a>
+            <a href="#contact" class="nav-link">Contact</a>
+            <a href="analyze.html">
+                <button class="btn">Get Started</button>
+              </a>
+        </div>
+    </nav>
+
+    <section id="home" class="hero">
+        <div class="hero-content">
+            <h1 class="hero-title">AI-Powered Content Verification</h1>
+            <p class="hero-subtitle">Detect manipulated content, analyze trends, and verify authenticity across all social platforms in real-time.</p>
+            <div class="hero-buttons">
+                <button class="btn">Start Free Trial</button>
+                <button class="btn btn-outline">Watch Demo</button>
+            </div>
+        </div>
+    </section>
+
+    <section id="stats" class="stats-section">
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-value">99.8%</div>
+                <div>Accuracy Rate</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">1M+</div>
+                <div>Posts Analyzed</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">5K+</div>
+                <div>Active Users</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">24/7</div>
+                <div>Real-time Monitoring</div>
+            </div>
+        </div>
+    </section>
+
+    <section id="testimonials" class="testimonials">
+        <h2 class="section-title">What Our Users Say</h2>
+        <div class="testimonials-grid">
+            <div class="testimonial-card">
+                <div class="testimonial-content">
+                    "TruthAI has transformed how we verify content. The accuracy and speed are unmatched."
+                </div>
+                <div class="testimonial-author">
+                    <div class="author-avatar">JD</div>
+                    <div class="author-info">
+                        <h4>John Doe</h4>
+                        <p>Digital Manager, Tech Corp</p>
+                    </div>
+                </div>
+            </div>
+            <div class="testimonial-card">
+                <div class="testimonial-content">
+                    "The real-time alerts have helped us catch and prevent the spread of misinformation."
+                </div>
+                <div class="testimonial-author">
+                    <div class="author-avatar">AS</div>
+                    <div class="author-info">
+                        <h4>Alice Smith</h4>
+                        <p>Content Director, Media Inc</p>
+                    </div>
+                </div>
+            </div>
+            <div class="testimonial-card">
+                <div class="testimonial-content">
+                    "Impressive analytics capabilities. It's become an essential tool for our team."
+                </div>
+                <div class="testimonial-author">
+                    <div class="author-avatar">RJ</div>
+                    <div class="author-info">
+                        <h4>Robert Johnson</h4>
+                        <p>CEO, Analytics Pro</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="contact" class="contact">
+        <h2 class="section-title">Get in Touch</h2>
+        <div class="contact-form">
+            <div class="form-group">
+                <input type="text" class="form-input" placeholder="Your Name">
+            </div>
+            <div class="form-group">
+                <input type="email" class="form-input" placeholder="Your Email">
+            </div>
+            <div class="form-group">
+                <textarea class="form-input" placeholder="Your Message"></textarea>
+            </div>
+            <button class="btn">Send Message</button>
+        </div>
+    </section>
+   
+
+</body>
+</html>
