@@ -14,6 +14,6 @@ def fact_check(query):
     else:
         return None
 
-# Example usage
+
 fact_check_results = fact_check("COVID-19 vaccine safety")
 print(fact_check_results)
