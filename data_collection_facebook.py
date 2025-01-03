@@ -21,6 +21,6 @@ def collect_facebook_data(query, max_results=50):
     else:
         return None
 
-# Example usage
+
 facebook_posts = collect_facebook_data("misinformation", 50)
 print(json.dumps(facebook_posts, indent=2))
